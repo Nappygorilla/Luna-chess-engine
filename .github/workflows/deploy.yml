@@ -26,21 +26,15 @@ jobs:
         with:
           node-version: 22
 
-      - name: Package website and Stockfish WebAssembly engine
+      - name: Package website and original Luna Engine
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p _site/vendor/stockfish
+          mkdir -p _site/vendor
           cp index.html _site/index.html
           cp THIRD-PARTY-NOTICES.md _site/THIRD-PARTY-NOTICES.md
           cp LICENSE _site/LICENSE
-          npm pack stockfish@19.0.1 --silent
-          tar -xzf stockfish-19.0.1.tgz package/bin/stockfish-19-lite-single.js package/bin/stockfish-19-lite-single.wasm package/bin/stockfish-19-single.js package/bin/stockfish-19-single.wasm package/Copying.txt
-          cp package/bin/stockfish-19-lite-single.js _site/vendor/stockfish/
-          cp package/bin/stockfish-19-lite-single.wasm _site/vendor/stockfish/
-          cp package/bin/stockfish-19-single.js _site/vendor/stockfish/
-          cp package/bin/stockfish-19-single.wasm _site/vendor/stockfish/
-          cp package/Copying.txt _site/vendor/stockfish/LICENSE-GPL-3.0.txt
+          cp engine/luna-engine-worker.js _site/vendor/luna-engine.js
           npm pack chess.js@0.10.3 --silent
           tar -xzf chess.js-0.10.3.tgz package/chess.js package/LICENSE
           cp package/chess.js _site/vendor/chess.js
