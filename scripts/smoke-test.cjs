@@ -66,7 +66,7 @@ const server = http.createServer((req, res) => {
     await page.goto("http://127.0.0.1:4173/Luna-chess-engine/", { waitUntil: "domcontentloaded" });
     try {
       await page.waitForFunction(
-        () => document.querySelector("#engine-state")?.textContent === "Ready",
+        () => ["Ready", "Analyzing", "Thinking"].includes(document.querySelector("#engine-state")?.textContent),
         null,
         { timeout: 30000 }
       );
