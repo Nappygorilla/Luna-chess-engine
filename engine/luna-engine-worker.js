@@ -150,8 +150,8 @@ importScripts('chess.js');
       if (type === 'p') {
         positional += advance * 5;
         positional += (3.5 - Math.abs(file - 3.5)) * 3;
-        var adjacentPawn = pawnsByFile[color][Math.max(0, file - 1)] +
-          pawnsByFile[color][Math.min(7, file + 1)];
+        var adjacentPawn = (file > 0 ? pawnsByFile[color][file - 1] : 0) +
+          (file < 7 ? pawnsByFile[color][file + 1] : 0);
         if (pawnsByFile[color][file] > 1) positional -= (pawnsByFile[color][file] - 1) * 13;
         if (adjacentPawn === 0) positional -= 11;
 
