@@ -355,7 +355,20 @@ importScripts('chess.js');
       game.move(moveOptions(move));
       var childInfo = positionInfo();
       incrementRepetition(childInfo.repetitionKey);
-      var score = -negamax(depth - 1, -beta, -alpha, ply + 1, state, childInfo);
+      var score;
+      if (i === 0) {
+        score = -negamax(depth - 1, -beta, -alpha, ply + 1, state, childInfo);
+      } else {
+        var quietMove = !move.captured && !move.promotion && !inCheck;
+        var reduced = depth >= 3 && i >= 4 && quietMove;
+        score = -negamax(depth - (reduced ? 2 : 1), -alpha - 1, -alpha, ply + 1, state, childInfo);
+        if (!state.aborted && reduced && score > alpha) {
+          score = -negamax(depth - 1, -alpha - 1, -alpha, ply + 1, state, childInfo);
+        }
+        if (!state.aborted && score > alpha && score < beta) {
+          score = -negamax(depth - 1, -beta, -alpha, ply + 1, state, childInfo);
+        }
+      }
       decrementRepetition(childInfo.repetitionKey);
       game.undo();
       if (state.aborted) return 0;
