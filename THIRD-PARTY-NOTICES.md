@@ -15,10 +15,11 @@ The engine binary is not modified by this project. If you redistribute a Stockfi
 
 ## chess.js
 
-The page uses chess.js 0.10.3 from cdnjs to validate legal moves and handle chess notation. It is distributed under the BSD-2-Clause licence.
+The site bundles chess.js 0.10.3 from its npm package to validate legal moves and handle chess notation. The build publishes the upstream file and BSD-2-Clause licence unchanged.
 
 - Source: https://github.com/jhlywa/chess.js/
-- CDN: https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js
+- Packaged distribution: https://www.npmjs.com/package/chess.js/v/0.10.3
+- Shipped copy: vendor/chess.js (with vendor/CHESSJS-LICENSE.txt)
 
 ## Fonts
 
