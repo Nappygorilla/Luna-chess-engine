@@ -4,7 +4,7 @@ Luna Chess Lab is an independent project and is not affiliated with, endorsed by
 
 ## Stockfish.js / Stockfish 19
 
-The deployment workflow downloads stockfish@19.0.1 from npm and publishes the unmodified single-threaded lite WebAssembly browser engine with the site. The engine is maintained by Nathan Rugg and contributors and is licensed under GNU General Public License version 3 (GPL-3.0). The matching Copying.txt licence is published alongside the engine in vendor/stockfish/.
+The deployment workflow downloads stockfish@19.0.1 from npm and publishes the unmodified single-threaded lite WebAssembly browser engine as the default, plus the unmodified full single-threaded WebAssembly engine as an optional ~94 MB build. The engine is maintained by Nathan Rugg and contributors and is licensed under GNU General Public License version 3 (GPL-3.0). The matching Copying.txt licence is published alongside the engine in vendor/stockfish/.
 
 - Source and engine documentation: https://github.com/nmrugg/stockfish.js/
 - npm package version: https://www.npmjs.com/package/stockfish/v/19.0.1
