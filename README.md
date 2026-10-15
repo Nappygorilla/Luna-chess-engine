@@ -19,7 +19,7 @@
 3. Visit **Actions** and open **Build and deploy Luna Chess Lab**. The workflow runs on each push to main and can also be started manually.
 4. When the deployment succeeds, GitHub Actions will show the public Pages URL.
 
-The build workflow downloads the pinned stockfish@19.0.1 npm package, adds its single-threaded lite WebAssembly engine and corresponding licence to the Pages artifact, and deploys the static website. The chess rules library and fonts are loaded from their CDNs, so visitors need an internet connection for the complete experience.
+The build workflow downloads the pinned stockfish@19.0.1 npm package, adds its single-threaded lite WebAssembly engine and corresponding licence to the Pages artifact, and deploys the static website. The chess rules library is bundled locally with its licence. Google Fonts remain an optional external enhancement with system-font fallbacks. Visitors need an internet connection on first load for the published site and engine assets to be downloaded.
 
 ## Run locally
 
