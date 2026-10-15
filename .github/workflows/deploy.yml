@@ -33,6 +33,7 @@ jobs:
           mkdir -p _site/vendor/stockfish
           cp index.html _site/index.html
           cp THIRD-PARTY-NOTICES.md _site/THIRD-PARTY-NOTICES.md
+          cp LICENSE _site/LICENSE
           npm pack stockfish@19.0.1 --silent
           tar -xzf stockfish-19.0.1.tgz package/bin/stockfish-19-lite-single.js package/bin/stockfish-19-lite-single.wasm package/Copying.txt
           cp package/bin/stockfish-19-lite-single.js _site/vendor/stockfish/
