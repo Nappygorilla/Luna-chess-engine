@@ -46,7 +46,7 @@ jobs:
           npm install --no-save playwright
           npx playwright install --with-deps chromium
 
-      - name: Verify chessboard and Stockfish in Chromium
+      - name: Verify original Luna Engine in Chromium
         run: node scripts/smoke-test.cjs
 
       - name: Upload Pages artifact
