@@ -91,7 +91,34 @@ const server = http.createServer((req, res) => {
       { timeout: 60000 }
     );
     assert.deepEqual(pageErrors, [], "browser should have no uncaught JavaScript errors");
-    console.log("Luna Chess Lab browser smoke test passed: Stockfish ready, recommendation shown, legal e2-e4 move accepted.");
+
+    // Verify the visible recovery control can recreate the worker and restore analysis.
+    await page.locator("#restart-engine").click();
+    await page.waitForFunction(
+      () => ["Ready", "Analyzing", "Thinking"].includes(document.querySelector("#engine-state")?.textContent),
+      null,
+      { timeout: 30000 }
+    );
+    await page.waitForFunction(
+      () => !["—", "…", ""].includes(document.querySelector("#best-move")?.textContent.trim()),
+      null,
+      { timeout: 60000 }
+    );
+
+    // The optional full build is intentionally opt-in because it is about 94 MB.
+    await page.locator("#engine-build").selectOption("full");
+    await page.waitForFunction(
+      () => ["Ready", "Analyzing", "Thinking"].includes(document.querySelector("#engine-state")?.textContent),
+      null,
+      { timeout: 120000 }
+    );
+    await page.waitForFunction(
+      () => !["—", "…", ""].includes(document.querySelector("#best-move")?.textContent.trim()),
+      null,
+      { timeout: 120000 }
+    );
+    assert.deepEqual(pageErrors, [], "browser should have no uncaught JavaScript errors after switching engine builds");
+    console.log("Luna Chess Lab browser smoke test passed: lite engine, recommendation, legal move, manual restart recovery, and full Stockfish build.");
   } finally {
     if (browser) await browser.close();
     await new Promise(resolve => server.close(resolve));
