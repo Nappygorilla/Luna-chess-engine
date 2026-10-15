@@ -35,9 +35,11 @@ jobs:
           cp THIRD-PARTY-NOTICES.md _site/THIRD-PARTY-NOTICES.md
           cp LICENSE _site/LICENSE
           npm pack stockfish@19.0.1 --silent
-          tar -xzf stockfish-19.0.1.tgz package/bin/stockfish-19-lite-single.js package/bin/stockfish-19-lite-single.wasm package/Copying.txt
+          tar -xzf stockfish-19.0.1.tgz package/bin/stockfish-19-lite-single.js package/bin/stockfish-19-lite-single.wasm package/bin/stockfish-19-single.js package/bin/stockfish-19-single.wasm package/Copying.txt
           cp package/bin/stockfish-19-lite-single.js _site/vendor/stockfish/
           cp package/bin/stockfish-19-lite-single.wasm _site/vendor/stockfish/
+          cp package/bin/stockfish-19-single.js _site/vendor/stockfish/
+          cp package/bin/stockfish-19-single.wasm _site/vendor/stockfish/
           cp package/Copying.txt _site/vendor/stockfish/LICENSE-GPL-3.0.txt
           npm pack chess.js@0.10.3 --silent
           tar -xzf chess.js-0.10.3.tgz package/chess.js package/LICENSE
