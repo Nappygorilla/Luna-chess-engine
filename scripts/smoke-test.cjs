@@ -58,13 +58,23 @@ const server = http.createServer((req, res) => {
     page.on("requestfailed", request => {
       console.error("[request failed]", request.url(), request.failure()?.errorText);
     });
+    page.on("response", response => {
+      if (response.status() >= 400 || /stockfish|chess\.js|vendor\//i.test(response.url())) console.error("[HTTP]", response.status(), response.url());
+    });
+    page.on("worker", worker => console.log("[worker]", worker.url()));
 
     await page.goto("http://127.0.0.1:4173/Luna-chess-engine/", { waitUntil: "domcontentloaded" });
-    await page.waitForFunction(
-      () => document.querySelector("#engine-state")?.textContent === "Ready",
-      null,
-      { timeout: 60000 }
-    );
+    try {
+      await page.waitForFunction(
+        () => document.querySelector("#engine-state")?.textContent === "Ready",
+        null,
+        { timeout: 30000 }
+      );
+    } catch (error) {
+      console.error("Engine state at timeout:", await page.locator("#engine-state").textContent());
+      console.error("Analysis status at timeout:", await page.locator("#analysis-sub").textContent());
+      throw error;
+    }
     await page.waitForFunction(
       () => !["—", "…", ""].includes(document.querySelector("#best-move")?.textContent.trim()),
       null,
