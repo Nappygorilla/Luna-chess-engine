@@ -39,6 +39,10 @@ jobs:
           cp package/bin/stockfish-19-lite-single.js _site/vendor/stockfish/
           cp package/bin/stockfish-19-lite-single.wasm _site/vendor/stockfish/
           cp package/Copying.txt _site/vendor/stockfish/LICENSE-GPL-3.0.txt
+          npm pack chess.js@0.10.3 --silent
+          tar -xzf chess.js-0.10.3.tgz package/chess.js package/LICENSE
+          cp package/chess.js _site/vendor/chess.js
+          cp package/LICENSE _site/vendor/CHESSJS-LICENSE.txt
           touch _site/.nojekyll
 
       - name: Install browser smoke-test tools
