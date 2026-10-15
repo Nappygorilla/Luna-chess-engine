@@ -41,6 +41,14 @@ jobs:
           cp package/Copying.txt _site/vendor/stockfish/LICENSE-GPL-3.0.txt
           touch _site/.nojekyll
 
+      - name: Install browser smoke-test tools
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+
+      - name: Verify chessboard and Stockfish in Chromium
+        run: node scripts/smoke-test.cjs
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
