@@ -113,6 +113,43 @@ const server = http.createServer((req, res) => {
       { timeout: 60000 }
     );
 
+    // Exercise the search on a known mate-in-one position, not only the opening.
+    const mateResult = await page.evaluate((fen) => new Promise((resolve, reject) => {
+      const worker = new Worker(new URL("vendor/luna-engine.js", window.location.href));
+      const timeout = window.setTimeout(() => {
+        worker.terminate();
+        reject(new Error("Luna did not finish the mate-in-one test in time"));
+      }, 20000);
+      const finish = (callback, value) => {
+        window.clearTimeout(timeout);
+        worker.terminate();
+        callback(value);
+      };
+      worker.onerror = error => finish(reject, new Error(error.message || "Luna worker failed in mate test"));
+      worker.onmessage = event => {
+        const line = String(event.data || "");
+        if (line === "uciok") {
+          worker.postMessage("isready");
+        } else if (line === "readyok") {
+          worker.postMessage("position fen " + fen);
+          worker.postMessage("go depth 2");
+        } else if (line.indexOf("info string ERROR:") === 0) {
+          finish(reject, new Error(line));
+        } else if (line.indexOf("bestmove ") === 0) {
+          const uci = line.trim().split(/\\s+/)[1];
+          const game = new Chess(fen);
+          let move = null;
+          if (uci && uci !== "(none)" && uci !== "0000") {
+            move = game.move({ from: uci.slice(0, 2), to: uci.slice(2, 4), promotion: uci[4] || "q" });
+          }
+          finish(resolve, { uci, legal: !!move, checkmate: !!move && game.in_checkmate() });
+        }
+      };
+      worker.postMessage("uci");
+    }), "7k/5Q2/6K1/8/8/8/8/8 w - - 0 1");
+    assert.ok(mateResult.legal, "Luna's tactical recommendation should be a legal move");
+    assert.ok(mateResult.checkmate, "Luna should find a forced mate in one");
+
     assert.equal(assetResponses["luna-engine.js"], 200, "the original Luna worker should load successfully");
     assert.equal(assetResponses["chess.js"], 200, "the chess rules library should load inside the worker");
     assert.ok(workerUrls.some(url => url.includes("/vendor/luna-engine.js")), "the page should launch Luna's own engine worker");
