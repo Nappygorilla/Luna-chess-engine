@@ -6,7 +6,7 @@
 
 - Responsive board with click-to-move and drag-and-drop interactions
 - Legal moves, captures, checks, checkmate, draws, and automatic queen promotion
-- Stockfish 19 analysis in the browser using a single-threaded lite WebAssembly build
+- Fast Stockfish 19 Lite analysis by default, with an optional full single-threaded Stockfish 19 build (~94 MB) for stronger browser analysis
 - Best move arrow, evaluation score, principal variations, search depth, node count, and elapsed time
 - Adjustable search depth and candidate lines, undo, board flip, palette choices, FEN copy, and PGN export
 - Optional mode to play White against the engine as Black
@@ -19,7 +19,7 @@
 3. Visit **Actions** and open **Build and deploy Luna Chess Lab**. The workflow runs on each push to main and can also be started manually.
 4. When the deployment succeeds, GitHub Actions will show the public Pages URL.
 
-The build workflow downloads the pinned stockfish@19.0.1 npm package, adds its single-threaded lite WebAssembly engine and corresponding licence to the Pages artifact, and deploys the static website. The chess rules library is bundled locally with its licence. Google Fonts remain an optional external enhancement with system-font fallbacks. Visitors need an internet connection on first load for the published site and engine assets to be downloaded.
+The build workflow downloads the pinned stockfish@19.0.1 npm package, adds both the single-threaded Lite engine and optional full single-threaded engine (plus the matching licence) to the Pages artifact, and deploys the static website. Lite loads by default; the full engine is loaded only if a visitor chooses **Engine build → Full · 94 MB**. It is still Stockfish 19—not an original engine that is stronger than Stockfish. The chess rules library is bundled locally with its licence. Google Fonts remain an optional external enhancement with system-font fallbacks. Visitors need an internet connection on first load for the published site and engine assets to be downloaded.
 
 ## Run locally
 
