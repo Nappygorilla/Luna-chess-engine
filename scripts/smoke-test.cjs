@@ -51,6 +51,8 @@ const server = http.createServer((req, res) => {
     browser = await chromium.launch({ headless: true });
     const page = await browser.newPage();
     const pageErrors = [];
+    const assetResponses = Object.create(null);
+    const workerUrls = [];
     page.on("pageerror", error => pageErrors.push(error.message));
     page.on("console", msg => {
       if (msg.type() === "error") console.error("[browser console]", msg.text());
@@ -59,9 +61,15 @@ const server = http.createServer((req, res) => {
       console.error("[request failed]", request.url(), request.failure()?.errorText);
     });
     page.on("response", response => {
-      if (response.status() >= 400 || /stockfish|chess\.js|vendor\//i.test(response.url())) console.error("[HTTP]", response.status(), response.url());
+      const url = response.url();
+      const asset = url.match(/\/vendor\/(luna-engine\.js|chess\.js)(?:$|\?)/i);
+      if (asset) assetResponses[asset[1].toLowerCase()] = response.status();
+      if (response.status() >= 400 || /luna-engine|stockfish|chess\.js|vendor\//i.test(url)) console.log("[HTTP]", response.status(), url);
     });
-    page.on("worker", worker => console.log("[worker]", worker.url()));
+    page.on("worker", worker => {
+      workerUrls.push(worker.url());
+      console.log("[worker]", worker.url());
+    });
 
     await page.goto("http://127.0.0.1:4173/Luna-chess-engine/", { waitUntil: "domcontentloaded" });
     try {
@@ -105,20 +113,15 @@ const server = http.createServer((req, res) => {
       { timeout: 60000 }
     );
 
-    // The optional full build is intentionally opt-in because it is about 94 MB.
-    await page.locator("#engine-build").selectOption("full");
-    await page.waitForFunction(
-      () => ["Ready", "Analyzing", "Thinking"].includes(document.querySelector("#engine-state")?.textContent),
-      null,
-      { timeout: 120000 }
-    );
-    await page.waitForFunction(
-      () => !["—", "…", ""].includes(document.querySelector("#best-move")?.textContent.trim()),
-      null,
-      { timeout: 120000 }
-    );
-    assert.deepEqual(pageErrors, [], "browser should have no uncaught JavaScript errors after switching engine builds");
-    console.log("Luna Chess Lab browser smoke test passed: lite engine, recommendation, legal move, manual restart recovery, and full Stockfish build.");
+    assert.equal(assetResponses["luna-engine.js"], 200, "the original Luna worker should load successfully");
+    assert.equal(assetResponses["chess.js"], 200, "the chess rules library should load inside the worker");
+    assert.ok(workerUrls.some(url => url.includes("/vendor/luna-engine.js")), "the page should launch Luna's own engine worker");
+    assert.ok(!workerUrls.some(url => /stockfish/i.test(url)), "the page must not launch Stockfish");
+    assert.ok(Number(await page.locator("#depth-stat").textContent()) >= 1, "Luna should report a completed search depth");
+    const recommendation = (await page.locator("#best-move").textContent()).trim();
+    assert.ok(recommendation && !["—", "…", ""].includes(recommendation), "Luna should return a recommendation");
+    assert.deepEqual(pageErrors, [], "browser should have no uncaught JavaScript errors after manual worker restart");
+    console.log("Luna Chess Lab browser smoke test passed: Luna engine worker, local assets, legal board move, recommendation, and restart recovery.");
   } finally {
     if (browser) await browser.close();
     await new Promise(resolve => server.close(resolve));
